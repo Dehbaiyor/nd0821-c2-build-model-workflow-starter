@@ -101,7 +101,7 @@ def go(args):
     ######################################
     mlflow.sklearn.save_model(
             sk_pipe,
-            random_forest_dir,
+            "random_forest_dir",
             serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE,
             input_example=X_val.iloc[:2],
         )
@@ -116,11 +116,11 @@ def go(args):
     artifact = wandb.Artifact(
             args.output_artifact,
             type="model_export",
-            metadata=rf_config
+            metadata=rf_config,
             description="Random Forest pipeline export",
         )
     
-    artifact.add_dir(export_path)
+    artifact.add_dir("random_forest_dir")
     run.log_artifact(artifact)
 
     # Plot feature importance
@@ -236,8 +236,8 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     sk_pipe = Pipeline(
         steps=[
             ("preprocessor", preprocessor),
-            ("random_forest", RandomForestRegressor(**model_config["random_forest"])),
-        ]
+            ("random_forest", RandomForestRegressor(**rf_config)),
+        ])
 
     return sk_pipe, processed_features
 
